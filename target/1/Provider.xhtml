@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+	<p:spinner />
+	<h:dataTable class="table" value="#{providerBean.providersList}"
+		var="p">
+		<h:column>
+			<f:facet name="header">ID</f:facet>
+			<h:outputText value="#{p.idProvider}" />
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">Nombre Proveedor</f:facet>
+			<h:outputText value="#{p.providerName}" />
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">Dirección</f:facet>
+			<h:outputText value="#{p.address}" />
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">Email</f:facet>
+			<h:outputText value="#{p.email}" />
+		</h:column>
+
+		<h:column>
+			<f:facet name="header">Cantidad de vehículos</f:facet>
+			<h:outputText value="#{p.numVehicles}" />
+		</h:column>
+	</h:dataTable>
+
+	<p:dataTable id="provider" var="prov"
+		value="#{providerBean.providersList}" rowKey="#{prov.idProvider}"
+		selectionMode="single">
+		<f:facet name="header">
+                RightClick to View Options
+            </f:facet>
+
+		<p:column headerText="Nombre">
+			<h:outputText value="#{prov.providerName}" />
+		</p:column>
+		<p:column headerText="Dirección">
+			<h:outputText value="#{prov.address}" />
+		</p:column>
+		<p:column headerText="Email">
+			<h:outputText value="#{prov.email}" />
+		</p:column>
+		<p:column headerText="Cantidad de Vehículos">
+			<h:outputText value="#{prov.numVehicles}" />
+		</p:column>
+	</p:dataTable>
+</h:body>
+</html>

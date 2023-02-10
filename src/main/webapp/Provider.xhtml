@@ -1,0 +1,277 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head></h:head>
+<h:body>
+	
+	<div class="card crud-demo">
+    <h:form id="form">
+        <p:growl id="messages" showDetail="true" />
+        <h5 class="mt-0">CRUD Proveedores</h5>
+        <p:toolbar>
+            <p:toolbarGroup>
+                <p:commandButton value="Nuevo Proveedor" icon="pi pi-plus" actionListener="#{providerBean.openNew}"
+                    update=":dialogs:manage-product-content" oncomplete="PF('manageProviderDialog').show()"
+                    styleClass="ui-button-success" style="margin-right: .5rem">
+                    <p:resetInput target=":dialogs:manage-product-content" />
+                </p:commandButton>
+            </p:toolbarGroup>
+        </p:toolbar>
+
+        <p:dataTable id="dt-provider" widgetVar="dtProducts" var="prov" value="#{providerBean.providersList}"
+            reflow="true" styleClass="products-table" selection="#{providerBean.selectedProvider}"
+            rowKey="#{prov.idProvider}" paginator="true" rows="10" paginatorPosition="bottom">
+            <f:facet name="header">
+                <div class="products-table-header">
+                    <span style="font-weight: bold">Providers</span>
+                    <span class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i>
+                        <p:inputText id="globalFilter" onkeyup="PF('dtProducts').filter()" placeholder="Search" />
+                    </span>
+                </div>
+            </f:facet>
+
+            <!--<p:ajax event="rowSelect" update=":form:delete-products-button" />
+             <p:ajax event="rowUnselect" update=":form:delete-products-button" />
+            <p:ajax event="rowSelectCheckbox" update=":form:delete-products-button" />
+            <p:ajax event="rowUnselectCheckbox" update=":form:delete-products-button" />
+            <p:ajax event="toggleSelect" update=":form:delete-products-button" />-->
+
+            
+            <p:column headerText="ID" sortBy="#{prov.idProvider}" filterBy="#{prov.idProvider}">
+                <h:outputText value="#{prov.idProvider}" />
+            </p:column>
+            <p:column headerText="Nombre" sortBy="#{prov.providerName}" filterBy="#{prov.providerName}">
+                <h:outputText value="#{prov.providerName}" />
+            </p:column>
+            <p:column headerText="Dirección" sortBy="#{prov.address}" filterBy="#{prov.address}">
+                <h:outputText value="#{prov.address}" />
+            </p:column>
+            <p:column headerText="Email" sortBy="#{prov.email}" filterBy="#{prov.email}">
+                <h:outputText value="#{prov.email}" />
+            </p:column>
+            <p:column headerText="Cantidad de Vehículos" sortBy="#{prov.numVehicles}" filterBy="#{prov.numVehicles}">
+                <h:outputText value="#{prov.numVehicles}" />
+            </p:column>
+            <p:column exportable="false">
+                <p:commandButton icon="pi pi-pencil" update=":dialogs:manage-product-content"
+                    oncomplete="PF('manageProviderDialog').show()"
+                    styleClass="edit-button rounded-button ui-button-success" process="@this">
+                    <f:setPropertyActionListener value="#{prov}" target="#{providerBean.selectedProvider}" />
+                    <p:resetInput target=":dialogs:manage-product-content" />
+                </p:commandButton>
+                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
+                                 process="@this"
+                                 oncomplete="PF('deleteProviderDialog').show()">
+                    <f:setPropertyActionListener value="#{prov}" target="#{providerBean.selectedProvider}" />
+                </p:commandButton>
+            </p:column>
+
+        </p:dataTable>
+    </h:form>
+
+    <h:form id="dialogs">
+        <p:dialog header="Proveedor" showEffect="fade" modal="true" widgetVar="manageProviderDialog"
+            responsive="true">
+            <p:outputPanel id="manage-product-content" class="ui-fluid">
+                <p:outputPanel rendered="#{not empty providerBean.selectedProvider}">
+                    
+                    <div class="field">
+                        <p:outputLabel for="nombreProvider">Nombre</p:outputLabel>
+                        <p:inputText id="nombreProvider" value="#{providerBean.selectedProvider.providerName}" required="true" />
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="direccionProvider">Dirección</p:outputLabel>
+                        <p:inputText id="direccionProvider" value="#{providerBean.selectedProvider.address}" />
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="emailProv">Email</p:outputLabel>
+                        <p:inputText id="emailProv" value="#{providerBean.selectedProvider.email}" />
+                    </div>
+                    
+                    <div class="field">
+                        <p:outputLabel for="numVehProv">Número de vehículos</p:outputLabel>
+                        <p:inputText id="numVehProv" value="#{providerBean.selectedProvider.numVehicles}" />
+                    </div>
+                    
+                </p:outputPanel>
+            </p:outputPanel>
+
+            <f:facet name="footer">
+                <p:commandButton value="Save" icon="pi pi-check" actionListener="#{providerBean.saveProvider}"
+                    update="manage-product-content" process="manage-product-content @this" />
+                <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageProviderDialog').hide()"
+                    class="ui-button-secondary" type="button" />
+            </f:facet>
+        </p:dialog>
+
+        <p:confirmDialog widgetVar="deleteProviderDialog" showEffect="fade" width="300"
+            message="Desea eliminar el proveedor?" header="Confirm" severity="warn">
+            <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{providerBean.deleteProvider}"
+                process="@this" update="form"
+                oncomplete="PF('deleteProviderDialog').hide()" />
+            <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                onclick="PF('deleteProviderDialog').hide()" />
+        </p:confirmDialog>
+
+        <p:confirmDialog global="true" showEffect="fade" width="300">
+            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                icon="pi pi-times" />
+        </p:confirmDialog>
+    </h:form>
+</div>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<div class="card crud-demo">
+    <h:form id="formVeh">
+        <p:growl id="messages" showDetail="true" />
+
+
+		<h5 class="mt-0">CRUD Vehiculos</h5>
+        <p:toolbar>
+            <p:toolbarGroup>
+                <p:commandButton value="Nuevo Vehículo" icon="pi pi-plus" actionListener="#{vehicleBean.openNew}"
+                    update=":dialogsVeh:manage-product-content" oncomplete="PF('manageVehicleDialog').show()"
+                    styleClass="ui-button-success" style="margin-right: .5rem">
+                    <p:resetInput target=":dialogsVeh:manage-product-content" />
+                </p:commandButton>
+            </p:toolbarGroup>
+        </p:toolbar>
+
+        <p:dataTable id="dt-vehicle" widgetVar="dtProducts" var="veh" value="#{vehicleBean.vehiclesList}"
+            reflow="true" styleClass="products-table" selection="#{vehicleBean.selectedVehicle}"
+            rowKey="#{veh.idVehicle}" paginator="true" rows="10" paginatorPosition="bottom">
+            <f:facet name="header">
+                <div class="products-table-header">
+                    <span style="font-weight: bold">Vehicles</span>
+                    <span class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i>
+                        <p:inputText id="globalFilter" onkeyup="PF('dtProducts').filter()" placeholder="Search" />
+                    </span>
+                </div>
+            </f:facet>
+
+            <!--<p:ajax event="rowSelect" update=":form:delete-products-button" />
+             <p:ajax event="rowUnselect" update=":form:delete-products-button" />
+            <p:ajax event="rowSelectCheckbox" update=":form:delete-products-button" />
+            <p:ajax event="rowUnselectCheckbox" update=":form:delete-products-button" />
+            <p:ajax event="toggleSelect" update=":form:delete-products-button" />-->
+
+            
+            <p:column headerText="ID" sortBy="#{veh.idVehicle}" filterBy="#{veh.idVehicle}">
+                <h:outputText value="#{veh.idVehicle}" />
+            </p:column>
+            <p:column headerText="Placa" sortBy="#{veh.vehiclePlate}" filterBy="#{veh.vehiclePlate}">
+                <h:outputText value="#{veh.vehiclePlate}" />
+            </p:column>
+            <p:column headerText="Marca" sortBy="#{veh.brandName}" filterBy="#{veh.brandName}">
+                <h:outputText value="#{veh.brandName}" />
+            </p:column>
+            <p:column headerText="Modelo" sortBy="#{veh.model}" filterBy="#{veh.model}">
+                <h:outputText value="#{veh.model}" />
+            </p:column>
+            <p:column headerText="Conductor" sortBy="#{veh.idDriver.driverName}" filterBy="#{veh.idDriver.driverName}">
+                <h:outputText value="#{veh.idDriver.driverName}" />
+            </p:column>
+            <p:column headerText="Estado" sortBy="#{veh.state}" filterBy="#{veh.state}">
+                <h:outputText value="#{veh.state}" />
+            </p:column>
+            <p:column exportable="false">
+                <p:commandButton icon="pi pi-pencil" update=":dialogsVeh:manage-product-content"
+                    oncomplete="PF('manageVehicleDialog').show()"
+                    styleClass="edit-button rounded-button ui-button-success" process="@this">
+                    <f:setPropertyActionListener value="#{veh}" target="#{vehicleBean.selectedVehicle}" />
+                    <p:resetInput target=":dialogsVeh:manage-product-content" />
+                </p:commandButton>
+                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash"
+                                 process="@this"
+                                 oncomplete="PF('deleteVehicleDialog').show()">
+                    <f:setPropertyActionListener value="#{veh}" target="#{vehicleBean.selectedVehicle}" />
+                </p:commandButton>
+            </p:column>
+
+        </p:dataTable>
+    </h:form>
+
+    <h:form id="dialogsVeh">
+        <p:dialog header="Vehículos" showEffect="fade" modal="true" widgetVar="manageVehicleDialog"
+            responsive="true">
+            <p:outputPanel id="manage-product-content" class="ui-fluid">
+                <p:outputPanel rendered="#{not empty vehicleBean.selectedVehicle}">
+                    
+                    <div class="field">
+                        <p:outputLabel for="plateVehicle">Placa</p:outputLabel>
+                        <p:inputText id="plateVehicle" value="#{vehicleBean.selectedVehicle.vehiclePlate}" required="true" />
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="brandVehicle">Marca</p:outputLabel>
+                        <p:inputText id="brandVehicle" value="#{vehicleBean.selectedVehicle.brandName}" />
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="modelVehicle">Modelo</p:outputLabel>
+                        <p:inputText id="modelVehicle" value="#{vehicleBean.selectedVehicle.model}" />
+                    </div>
+                    
+                    <!--  <div class="field">
+                        <p:outputLabel for="driverVehicle">Conductor</p:outputLabel>
+                        
+                        <p:selectOneMenu id="driverVehicle" value="#{vehicleBean.selectedVehicle.idDriver}" effect="fold" editable="true" required="true">
+		                    <f:selectItem itemLabel="Seleccione" itemValue="" noSelectionOption="true"/>
+		                    <f:selectItems value="#{vehicleBean.driversList}" var="drivers" 
+		                    				itemLabel="#{drivers.driverName}" itemValue="drivers"/>
+		                </p:selectOneMenu>
+                    </div>-->
+                    
+                    <div class="field">
+                        <p:outputLabel for="stateVehicle">Estado</p:outputLabel>
+                        
+                        <p:selectOneMenu id="stateVehicle" value="#{vehicleBean.selectedVehicle.state}" required="true">
+		                    <f:selectItem itemLabel="Seleccione" itemValue="" noSelectionOption="true"/>
+		                    <f:selectItem itemLabel="ACTIVO" itemValue="ACTIVO"/>
+		                    <f:selectItem itemLabel="INACTIVO" itemValue="INACTIVO"/>
+		                </p:selectOneMenu>
+                    </div>
+                    
+                </p:outputPanel>
+            </p:outputPanel>
+
+            <f:facet name="footer">
+                <p:commandButton value="Save" icon="pi pi-check" actionListener="#{vehicleBean.saveVehicle}"
+                    update="manage-product-content" process="manage-product-content @this" />
+                <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageVehicleDialog').hide()"
+                    class="ui-button-secondary" type="button" />
+            </f:facet>
+        </p:dialog>
+
+        <p:confirmDialog widgetVar="deleteVehicleDialog" showEffect="fade" width="300"
+            message="Desea eliminar el vehículo?" header="Confirm" severity="warn">
+            <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{vehicleBean.deleteVehicle}"
+                process="@this" update="formVeh"
+                oncomplete="PF('deleteVehicleDialog').hide()" />
+            <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                onclick="PF('deleteVehicleDialog').hide()" />
+        </p:confirmDialog>
+
+        <p:confirmDialog global="true" showEffect="fade" width="300">
+            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no ui-button-secondary"
+                icon="pi pi-times" />
+        </p:confirmDialog>
+    </h:form>
+    
+</div>
+
+</h:body>
+</html>
